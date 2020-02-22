@@ -8,6 +8,8 @@ local Ball = Object:extend()
 
 Ball.gravity = 100
 Ball.maxVelocity = 200
+Ball.Width = 32
+Ball.Height = 32
 
 function Ball:new(court, x, y, z)
   self.court = court
@@ -35,13 +37,13 @@ end
 function Ball:draw()
   local center = self.court:getScreenPosition(self.position, true)
 
-  love.graphics.draw(image, center.x - 16, center.y - 16)
+  love.graphics.draw(image, center.x - Ball.Width / 2, center.y - Ball.Height / 2)
 end
 
 function Ball:drawShadow()
   local center = self.court:getScreenPosition(self.position, false)
 
-  love.graphics.draw(shadowImage, center.x - 16, center.y - 16)
+  love.graphics.draw(shadowImage, center.x - Ball.Width / 2, center.y - Ball.Height / 2)
 end
 
 return Ball

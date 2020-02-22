@@ -1,4 +1,5 @@
 local Object = require("lib.classic")
+local Position = require("lamavolley.position")
 
 local image = love.graphics.newImage("assets/images/lama2-Sheet.png")
 
@@ -14,6 +15,8 @@ local quads = {
 local Lama = Object:extend()
 
 Lama.Velocity = 100
+Lama.Width = 128
+Lama.Height = 128
 
 Lama.Direction = {
   Left = 1,
@@ -27,10 +30,12 @@ Lama.Motion = {
   Left = 4
 }
 
-function Lama:new(x, y, direction)
+function Lama:new(court, ball, x, y, direction)
+  self.court = court
+  self.ball = ball
   self.direction = direction
   self.motions = {}
-  self.transform = love.math.newTransform(x, y, 0, self.direction == Lama.Direction.Right and 1 or -1, 1)
+  self.position = Position(x, y, 0)
   self.animation = {
     duration = 0.2,
     cursor = 0,
@@ -43,19 +48,19 @@ function Lama:update(dt)
   local directionCorrection = self.direction == Lama.Direction.Right and 1 or -1
 
   if self.motions[Lama.Motion.Up] == true then
-    self.transform:translate(0, -dt * Lama.Velocity)
+    self.position:translate(dt * Lama.Velocity, 0)
   end
 
   if self.motions[Lama.Motion.Right] == true then
-    self.transform:translate(directionCorrection * dt * Lama.Velocity, 0)
+    self.position:translate(0, -dt * Lama.Velocity)
   end
 
   if self.motions[Lama.Motion.Down] == true then
-    self.transform:translate(0, dt * Lama.Velocity)
+    self.position:translate(-dt * Lama.Velocity, 0)
   end
 
   if self.motions[Lama.Motion.Left] == true then
-    self.transform:translate(-directionCorrection * dt * Lama.Velocity, 0)
+    self.position:translate(0, dt * Lama.Velocity)
   end
 
   if self.animation.active then
@@ -105,8 +110,17 @@ end
 
 function Lama:draw()
   local quad = self.animation.active and quads.run[self.animation.frame] or quads.stand
+  local center = self.court:getScreenPosition(self.position, true)
 
-  love.graphics.draw(image, quad, self.transform)
+  love.graphics.draw(
+    image,
+    quad,
+    center.x - Lama.Width / 2 + ((self.direction == Lama.Direction.Right and 0 or 1) * Lama.Width),
+    center.y - Lama.Height,
+    0,
+    self.direction == Lama.Direction.Right and 1 or -1,
+    1
+  )
 end
 
 return Lama

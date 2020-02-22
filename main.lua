@@ -2,13 +2,13 @@ local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 
-local lamas = {
-  Lama(256, 384, Lama.Direction.Right),
-  Lama(768, 384, Lama.Direction.Left)
-}
-
 local court = Court({x = 100, y = 200}, {x = 0, y = 128})
 local ball = Ball(court, 0, -50, 10)
+
+local lamas = {
+  Lama(court, ball, 0, 50, Lama.Direction.Right),
+  Lama(court, ball, 0, -50, Lama.Direction.Left)
+}
 
 function love.load()
   love.window.setMode(1024, 768)
@@ -36,32 +36,19 @@ end
 
 function love.keypressed(key, unicode)
   if key == "up" then
-    -- lamas[2]:activateMotion(Lama.Motion.Up)
-    ball.velocity.z = 50
+    lamas[2]:activateMotion(Lama.Motion.Up)
   end
 
   if key == "right" then
-    -- lamas[2]:activateMotion(Lama.Motion.Right)
-    ball.velocity.y = -100
+    lamas[2]:activateMotion(Lama.Motion.Right)
   end
 
   if key == "down" then
-  -- lamas[2]:activateMotion(Lama.Motion.Down)
+    lamas[2]:activateMotion(Lama.Motion.Down)
   end
 
   if key == "left" then
-    -- lamas[2]:activateMotion(Lama.Motion.Left)
-    ball.velocity.y = 100
-  end
-
-  if key == "a" then
-    -- lamas[2]:activateMotion(Lama.Motion.Left)
-    ball.velocity.x = 50
-  end
-
-  if key == "q" then
-    -- lamas[2]:activateMotion(Lama.Motion.Left)
-    ball.velocity.x = -50
+    lamas[2]:activateMotion(Lama.Motion.Left)
   end
 
   if key == "w" then
