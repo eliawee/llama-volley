@@ -35,6 +35,10 @@ function love.draw()
 end
 
 function love.keypressed(key, unicode)
+  if key == "return" then
+    lamas[2]:headKick()
+  end
+
   if key == "up" then
     lamas[2]:activateMotion(Lama.Motion.Up)
   end

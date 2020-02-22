@@ -1,14 +1,18 @@
 local Object = require("lib.classic")
 local Position = require("lamavolley.position")
 
-local image = love.graphics.newImage("assets/images/lama2-Sheet.png")
+local images = {
+  motion = love.graphics.newImage("assets/images/lama2-Sheet.png"),
+  headKick = love.graphics.newImage("assets/images/lama2-headkick.png")
+}
 
 local quads = {
-  stand = love.graphics.newQuad(0, 0, 128, 128, image:getDimensions()),
+  headKick = love.graphics.newQuad(0, 0, 128, 128, images.headKick:getDimensions()),
+  stand = love.graphics.newQuad(0, 0, 128, 128, images.motion:getDimensions()),
   run = {
-    love.graphics.newQuad(0, 0, 128, 128, image:getDimensions()),
-    love.graphics.newQuad(128, 0, 128, 128, image:getDimensions()),
-    love.graphics.newQuad(256, 0, 128, 128, image:getDimensions())
+    love.graphics.newQuad(0, 0, 128, 128, images.motion:getDimensions()),
+    love.graphics.newQuad(128, 0, 128, 128, images.motion:getDimensions()),
+    love.graphics.newQuad(256, 0, 128, 128, images.motion:getDimensions())
   }
 }
 
@@ -42,6 +46,12 @@ function Lama:new(court, ball, x, y, direction)
     frame = 1,
     active = false
   }
+
+  self.headKickState = {
+    active = false,
+    duration = 0.2,
+    cursor = 0
+  }
 end
 
 function Lama:update(dt)
@@ -63,6 +73,14 @@ function Lama:update(dt)
     self.position:translate(0, dt * Lama.Velocity)
   end
 
+  if self.headKickState.active then
+    self.headKickState.cursor = self.headKickState.cursor + dt
+
+    if self.headKickState.cursor >= self.headKickState.duration then
+      self.headKickState.active = false
+    end
+  end
+
   if self.animation.active then
     self.animation.cursor = self.animation.cursor + dt
 
@@ -75,6 +93,20 @@ function Lama:update(dt)
       end
     end
   end
+
+  if
+    self.headKickState.active and self.ball.position.z < 4 and self.ball.position.z > 2 and
+      math.abs(self.ball.position.x - self.position.x) < 2 and
+      math.abs(self.ball.position.y - (self.position.y + 3)) < 4
+   then
+    self.ball.velocity.z = 30
+    self.ball.velocity.y = 100
+  end
+end
+
+function Lama:headKick()
+  self.headKickState.active = true
+  self.headKickState.cursor = 0
 end
 
 function Lama:resetRunAnimation()
@@ -113,8 +145,8 @@ function Lama:draw()
   local center = self.court:getScreenPosition(self.position, true)
 
   love.graphics.draw(
-    image,
-    quad,
+    self.headKickState.active and images.headKick or images.motion,
+    self.headKickState.active and quads.headKick or quad,
     center.x - Lama.Width / 2 + ((self.direction == Lama.Direction.Right and 0 or 1) * Lama.Width),
     center.y - Lama.Height,
     0,

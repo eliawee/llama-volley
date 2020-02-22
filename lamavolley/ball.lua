@@ -6,7 +6,7 @@ local shadowImage = love.graphics.newImage("assets/images/lama-ball-shadow.png")
 
 local Ball = Object:extend()
 
-Ball.gravity = 100
+Ball.gravity = 50
 Ball.maxVelocity = 200
 Ball.Width = 32
 Ball.Height = 32
