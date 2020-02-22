@@ -1,12 +1,13 @@
 local Ball = require("lamavolley.ball")
+local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 
-local lamas = {
-  Lama(256, 384, Lama.Direction.Right),
-  Lama(768, 384, Lama.Direction.Left)
-}
+local lamas = {}
+-- Lama(256, 384, Lama.Direction.Right),00
+-- Lama(768, 384, Lama.Direction.Left)
 
-local ball = Ball(768, 100)
+local court = Court({x = 100, y = 200}, {x = 0, y = 0})
+local ball = Ball(court, 50, -100)
 
 local groundImage = love.graphics.newImage("assets/images/lama-ground.png")
 
@@ -23,7 +24,7 @@ function love.update(dt)
 end
 
 function love.draw()
-  love.graphics.draw(groundImage, 0, 128)
+  love.graphics.draw(groundImage, 0, 0)
 
   for index, lama in pairs(lamas) do
     lama:draw()
