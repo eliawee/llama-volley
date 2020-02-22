@@ -3,6 +3,8 @@ local Position = require("lamavolley.position")
 
 local Court = Object:extend()
 
+local image = love.graphics.newImage("assets/images/lama-ground.png")
+
 Court.ScreenBounds = {
   UpLeft = {
     x = 128,
@@ -36,17 +38,21 @@ function Court:getLineBounds(position)
   }
 end
 
-function Court:getScreenPosition(position)
+function Court:getScreenPosition(position, useZ)
   local lineBounds = self:getLineBounds(position)
   local lineCoeff = (position.y * (-0.5)) / (self.dimensions.y / 2) + 0.5
   local farCoeff = (position.x * 0.5) / (self.dimensions.x / 2) + 0.5
 
-  print(position.x, self.dimensions.x)
-
   return Position(
-    lineCoeff * (lineBounds.right - lineBounds.left) + lineBounds.left,
-    farCoeff * (Court.ScreenBounds.UpLeft.y - Court.ScreenBounds.DownLeft.y) + Court.ScreenBounds.DownLeft.y
+    lineCoeff * (lineBounds.right - lineBounds.left) + lineBounds.left + self.screenOffset.x,
+    farCoeff * (Court.ScreenBounds.UpLeft.y - Court.ScreenBounds.DownLeft.y) + Court.ScreenBounds.DownLeft.y +
+      self.screenOffset.y -
+      (useZ and (position.z * self.dimensions.x / 3) or 0)
   )
+end
+
+function Court:draw()
+  love.graphics.draw(image, self.screenOffset.x, self.screenOffset.y)
 end
 
 return Court
