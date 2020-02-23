@@ -25,7 +25,7 @@ local quads = {
 
 local Lama = Object:extend()
 
-Lama.Velocity = 100
+Lama.Velocity = 50--100
 Lama.Width = 128
 Lama.Height = 128
 
@@ -108,8 +108,8 @@ function Lama:update(dt)
 
   if
     self.headKickState.active and self.ball.position.z < 4 and self.ball.position.z > 2 and
-      math.abs(self.ball.position.x - self.position.x) < 2 and
-      math.abs(self.ball.position.y - (self.position.y + 3)) < 4
+      math.abs(self.ball.position.x - self.position.x) < 10 and
+      math.abs(self.ball.position.y - (self.position.y + 3)) < 20
    then
     self.ball.velocity.z = 30
     self.ball.velocity.y = self.direction == Lama.Direction.Left and 100 or -100
