@@ -152,7 +152,7 @@ function Lama:update(dt)
 
     self.ball.velocity.z = 30 * bonus
 
-    print(self.position.x - self.ball.position.x)
+    self.ball.velocity.x = 4 * (self.ball.position.x - self.position.x)
 
     self.ball.velocity.y = (self.direction == Lama.Direction.Left and 100 or -100)
     self.lastKick = love.timer.getTime()
