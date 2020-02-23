@@ -9,7 +9,8 @@ local images = {
   blue = {
     motion = love.graphics.newImage("assets/images/lama-blue.png"),
     headKick = love.graphics.newImage("assets/images/lama-blue-headkick.png")
-  }
+  },
+  shadow = love.graphics.newImage("assets/images/lama-shadow.png")
 }
 
 local quads = {
@@ -151,6 +152,12 @@ function Lama:deactivateMotion(motion)
   if not self:isInMotion() then
     self:stopRunAnimation()
   end
+end
+
+function Lama:drawShadow()
+  local center = self.court:getScreenPosition(self.position, false)
+
+  love.graphics.draw(images.shadow, center.x - 36, center.y - 15)
 end
 
 function Lama:draw()

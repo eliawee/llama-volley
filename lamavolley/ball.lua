@@ -26,14 +26,14 @@ function Ball:update(dt)
 
   self.position.z = self.position.z + self.velocity.z * dt
 
-  if self.position.z <= 0 then
+  if self.position.z <= 0.5 then
     if self.velocity.z < 0 then
       self.velocity.z = -self.velocity.z / 2
       self.velocity.x = self.velocity.x / 2
       self.velocity.y = self.velocity.y / 2
     end
 
-    self.position.z = 0
+    self.position.z = 0.5
   else
     self.position.x = self.position.x + self.velocity.x * dt
     self.position.y = self.position.y + self.velocity.y * dt

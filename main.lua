@@ -30,14 +30,35 @@ function love.draw()
   love.graphics.draw(backgroundImage, 0, 0)
 
   court:draw()
-  ball:drawShadow()
 
   for index, lama in pairs(lamas) do
-    lama:draw()
+    lama:drawShadow()
     --
   end
 
-  ball:draw()
+  ball:drawShadow()
+
+  if ball.position.y > 0 then
+    lamas[2]:draw()
+
+    if ball.position.x > lamas[1].position.x then
+      ball:draw()
+      lamas[1]:draw()
+    else
+      lamas[1]:draw()
+      ball:draw()
+    end
+  else
+    lamas[1]:draw()
+
+    if ball.position.x > lamas[2].position.x then
+      ball:draw()
+      lamas[2]:draw()
+    else
+      lamas[2]:draw()
+      ball:draw()
+    end
+  end
 end
 
 function love.keypressed(key, unicode)
