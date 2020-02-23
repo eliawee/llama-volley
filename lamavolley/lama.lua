@@ -77,6 +77,18 @@ function Lama:new(court, ball, x, y, direction, color)
   self.id = count
 end
 
+function Lama:canTranslateY(distance)
+  if self.direction == Lama.Direction.Right and self.position.y + distance - 10 <= 0 then
+    return false
+  end
+
+  if self.direction == Lama.Direction.Left and self.position.y + distance + 10 >= 0 then
+    return false
+  end
+
+  return true
+end
+
 function Lama:update(dt)
   local directionCorrection = self.direction == Lama.Direction.Right and 1 or -1
 
@@ -84,7 +96,7 @@ function Lama:update(dt)
     self.position:translate(dt * Lama.Velocity, 0)
   end
 
-  if self.motions[Lama.Motion.Right] == true and self.position.y - dt * Lama.Velocity - 5 > self.court.netHeight then
+  if self.motions[Lama.Motion.Right] == true and self:canTranslateY(-dt * Lama.Velocity) then
     self.position:translate(0, -dt * Lama.Velocity)
   end
 
@@ -92,7 +104,7 @@ function Lama:update(dt)
     self.position:translate(-dt * Lama.Velocity, 0)
   end
 
-  if self.motions[Lama.Motion.Left] == true and self.position.y + dt * Lama.Velocity + 15 < self.court.netHeight then
+  if self.motions[Lama.Motion.Left] == true and self:canTranslateY(dt * Lama.Velocity) then
     self.position:translate(0, dt * Lama.Velocity)
   end
 
