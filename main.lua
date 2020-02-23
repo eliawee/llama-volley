@@ -2,6 +2,8 @@ local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 
+local WASD = {"z", "q", "s", "d"}
+
 local court = Court({x = 100, y = 200}, {x = 0, y = 128})
 local ball = Ball(court, 0, -50, 10)
 
@@ -35,6 +37,16 @@ function love.draw()
 end
 
 function love.keypressed(key, unicode)
+  if key == "escape" then
+    ball.position.x = 0
+    ball.position.y = -50
+    ball.position.z = 10
+  end
+
+  if key == "space" then
+    lamas[1]:headKick()
+  end
+
   if key == "return" then
     lamas[2]:headKick()
   end
@@ -55,19 +67,19 @@ function love.keypressed(key, unicode)
     lamas[2]:activateMotion(Lama.Motion.Left)
   end
 
-  if key == "w" then
+  if key == WASD[1] then
     lamas[1]:activateMotion(Lama.Motion.Up)
   end
 
-  if key == "d" then
+  if key == WASD[4] then
     lamas[1]:activateMotion(Lama.Motion.Right)
   end
 
-  if key == "s" then
+  if key == WASD[3] then
     lamas[1]:activateMotion(Lama.Motion.Down)
   end
 
-  if key == "a" then
+  if key == WASD[2] then
     lamas[1]:activateMotion(Lama.Motion.Left)
   end
 end
@@ -89,19 +101,19 @@ function love.keyreleased(key, unicode)
     lamas[2]:deactivateMotion(Lama.Motion.Left)
   end
 
-  if key == "w" then
+  if key == WASD[1] then
     lamas[1]:deactivateMotion(Lama.Motion.Up)
   end
 
-  if key == "d" then
+  if key == WASD[4] then
     lamas[1]:deactivateMotion(Lama.Motion.Right)
   end
 
-  if key == "s" then
+  if key == WASD[3] then
     lamas[1]:deactivateMotion(Lama.Motion.Down)
   end
 
-  if key == "a" then
+  if key == WASD[2] then
     lamas[1]:deactivateMotion(Lama.Motion.Left)
   end
 end

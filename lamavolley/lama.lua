@@ -100,7 +100,7 @@ function Lama:update(dt)
       math.abs(self.ball.position.y - (self.position.y + 3)) < 4
    then
     self.ball.velocity.z = 30
-    self.ball.velocity.y = 100
+    self.ball.velocity.y = self.direction == Lama.Direction.Left and 100 or -100
   end
 end
 
