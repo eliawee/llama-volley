@@ -29,7 +29,7 @@ local quads = {
 local Lama = Object:extend()
 local count = 0
 
-Lama.Velocity = 50
+Lama.Velocity = 75
 Lama.Width = 128
 Lama.Height = 128
 
