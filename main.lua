@@ -3,8 +3,9 @@ local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 
 local WASD = {"z", "q", "s", "d"}
+local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 
-local court = Court({x = 100, y = 200}, {x = 0, y = 128})
+local court = Court({x = 100, y = 200}, {x = 192, y = 320})
 local ball = Ball(court, 0, -50, 10)
 
 local lamas = {
@@ -13,7 +14,8 @@ local lamas = {
 }
 
 function love.load()
-  love.window.setMode(1024, 768)
+  print(backgroundImage:getDimensions())
+  love.window.setMode(backgroundImage:getDimensions())
 end
 
 function love.update(dt)
@@ -25,6 +27,8 @@ function love.update(dt)
 end
 
 function love.draw()
+  love.graphics.draw(backgroundImage, 0, 0)
+
   court:draw()
   ball:drawShadow()
 
