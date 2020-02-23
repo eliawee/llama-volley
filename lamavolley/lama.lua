@@ -131,12 +131,28 @@ function Lama:update(dt)
   end
 
   if
-    self.headKickState.active and self.ball.position.z < 4 and self.ball.position.z > 2 and
+    self.headKickState.active and (not self.lastKick or love.timer.getTime() - self.lastKick > 0.5) and
+      self.ball.playable and
+      self.ball.position.z <= 4 and
+      self.ball.position.z > 2 and
       math.abs(self.ball.position.x - self.position.x) < 10 and
       math.abs(self.ball.position.y - (self.position.y + 3)) < 20
    then
-    self.ball.velocity.z = 30
-    self.ball.velocity.y = self.direction == Lama.Direction.Left and 100 or -100
+    local minBonus = 0.2
+    local maxBonus = 1
+    local bonusK = (4 * minBonus - 3.5) / (4 - 3.5)
+    local bonusAlpha = (1 - bonusK) / 4
+    local bonus = bonusAlpha * self.ball.position.z + bonusK
+
+    if bonus < minBonus then
+      bonus = minBonus
+    elseif bonus > maxBonus then
+      bonus = maxBonus
+    end
+
+    self.ball.velocity.z = 70 * bonus
+    self.ball.velocity.y = (self.direction == Lama.Direction.Left and 100 or -100)
+    self.lastKick = love.timer.getTime()
   end
 end
 
@@ -195,6 +211,7 @@ end
 
 function Lama:serve()
   self.ball.servingLama = self
+  self.ball.playable = true
 end
 
 function Lama:deactivateMotion(motion)

@@ -17,6 +17,7 @@ function Ball:new(court, x, y, z)
   self.position = Position(x, y, z)
   self.velocity = {x = 0, y = 0, z = 0}
   self.servingLama = nil
+  self.playable = true
 end
 
 function Ball:onStop(listener)
@@ -38,6 +39,8 @@ function Ball:update(dt)
   self.position.z = self.position.z + self.velocity.z * dt
 
   if self.position.z <= 0.5 then
+    self.playable = false
+
     if self.velocity.z < 0 then
       self.velocity.z = -self.velocity.z / 2
       self.velocity.x = self.velocity.x / 2
