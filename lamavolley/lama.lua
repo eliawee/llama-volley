@@ -78,21 +78,20 @@ function Lama:new(court, ball, x, y, direction, color)
 end
 
 function Lama:canTranslateY(distance)
-  if self.direction == Lama.Direction.Right and self.position.y + distance - 10 <= 0 then
-    return false
-  end
+  return not (self.direction == Lama.Direction.Right and self.position.y + distance - 10 <= 0) and
+    not (self.direction == Lama.Direction.Right and self.position.y + distance - 10 >= self.court.dimensions.y / 2) and
+    not (self.direction == Lama.Direction.Left and self.position.y + distance + 10 >= 0) and
+    not (self.direction == Lama.Direction.Left and self.position.y + distance + 10 <= -self.court.dimensions.y / 2)
+end
 
-  if self.direction == Lama.Direction.Left and self.position.y + distance + 10 >= 0 then
-    return false
-  end
-
-  return true
+function Lama:canTranslateX(distance)
+  return not (math.abs(self.position.x + distance) > self.court.dimensions.x / 2)
 end
 
 function Lama:update(dt)
   local directionCorrection = self.direction == Lama.Direction.Right and 1 or -1
 
-  if self.motions[Lama.Motion.Up] == true then
+  if self.motions[Lama.Motion.Up] == true and self:canTranslateX(dt * Lama.Velocity) then
     self.position:translate(dt * Lama.Velocity, 0)
   end
 
@@ -100,7 +99,7 @@ function Lama:update(dt)
     self.position:translate(0, -dt * Lama.Velocity)
   end
 
-  if self.motions[Lama.Motion.Down] == true then
+  if self.motions[Lama.Motion.Down] == true and self:canTranslateX(-dt * Lama.Velocity) then
     self.position:translate(-dt * Lama.Velocity, 0)
   end
 
