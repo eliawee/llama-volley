@@ -24,9 +24,10 @@ Court.ScreenBounds = {
   }
 }
 
-function Court:new(dimensions, screenOffset)
+function Court:new(dimensions, screenOffset, netHeight)
   self.dimensions = dimensions
   self.screenOffset = screenOffset
+  self.netHeight = netHeight
 end
 
 function Court:getLineBounds(position)

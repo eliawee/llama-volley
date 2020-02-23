@@ -5,7 +5,7 @@ local Lama = require("lamavolley.lama")
 local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 
-local court = Court({x = 100, y = 200}, {x = 192, y = 320})
+local court = Court({x = 100, y = 200}, {x = 192, y = 320}, 6)
 local ball = Ball(court, 0, 0, 100)
 
 local lamas = {

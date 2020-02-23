@@ -12,7 +12,6 @@ Ball.gravity = 50
 Ball.maxVelocity = 200
 Ball.Width = 32
 Ball.Height = 32
-Ball.NetHeight = 6
 
 function Ball:new(court, x, y, z)
   self.court = court
@@ -86,7 +85,7 @@ function Ball:update(dt)
 
     if
       ((self.position.y < 0 and lastY >= 0) or (self.position.y > 0 and lastY <= 0)) and
-        self.position.z < Ball.NetHeight
+        self.position.z < self.court.netHeight
      then
       local direction = -1 * (math.abs(self.velocity.y) / self.velocity.y)
       self.position.y = lastY
