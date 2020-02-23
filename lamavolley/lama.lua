@@ -4,16 +4,19 @@ local Position = require("lamavolley.position")
 local images = {
   red = {
     motion = love.graphics.newImage("assets/images/lama-red.png"),
+    buttKick = love.graphics.newImage("assets/images/lama-red-buttkick.png"),
     headKick = love.graphics.newImage("assets/images/lama-red-headkick.png")
   },
   blue = {
     motion = love.graphics.newImage("assets/images/lama-blue.png"),
+    buttKick = love.graphics.newImage("assets/images/lama-blue-buttkick.png"),
     headKick = love.graphics.newImage("assets/images/lama-blue-headkick.png")
   },
   shadow = love.graphics.newImage("assets/images/lama-shadow.png")
 }
 
 local quads = {
+  buttKick = love.graphics.newQuad(0, 0, 128, 128, images.red.buttKick:getDimensions()),
   headKick = love.graphics.newQuad(0, 0, 128, 128, images.red.headKick:getDimensions()),
   stand = love.graphics.newQuad(0, 0, 128, 128, images.red.motion:getDimensions()),
   run = {
@@ -24,8 +27,9 @@ local quads = {
 }
 
 local Lama = Object:extend()
+local count = 0
 
-Lama.Velocity = 50--100
+Lama.Velocity = 50
 Lama.Width = 128
 Lama.Height = 128
 
@@ -63,7 +67,14 @@ function Lama:new(court, ball, x, y, direction, color)
     duration = 0.2,
     cursor = 0
   }
+  self.buttKickState = {
+    active = false,
+    duration = 0.2,
+    cursor = 0
+  }
   self.images = color == Lama.Color.Blue and images.blue or images.red
+  count = count + 1
+  self.id = count
 end
 
 function Lama:update(dt)
@@ -93,6 +104,14 @@ function Lama:update(dt)
     end
   end
 
+  if self.buttKickState.active then
+    self.buttKickState.cursor = self.buttKickState.cursor + dt
+
+    if self.buttKickState.cursor >= self.buttKickState.duration then
+      self.buttKickState.active = false
+    end
+  end
+
   if self.animation.active then
     self.animation.cursor = self.animation.cursor + dt
 
@@ -106,6 +125,11 @@ function Lama:update(dt)
     end
   end
 
+  if self:isServing() and self.buttKickState.active then
+    self.ball.velocity.z = 30
+    self.ball.servingLama = nil
+  end
+
   if
     self.headKickState.active and self.ball.position.z < 4 and self.ball.position.z > 2 and
       math.abs(self.ball.position.x - self.position.x) < 10 and
@@ -116,10 +140,33 @@ function Lama:update(dt)
   end
 end
 
+function Lama:getServingBallPosition()
+  return self.position:clone():translate(
+    0,
+    self.direction == Lama.Direction.Left and 7 or -7,
+    self.animation.frame == 1 and 2 or 2.2
+  )
+end
+
 function Lama:headKick()
   if not self.headKickState.active then
     self.headKickState.active = true
     self.headKickState.cursor = 0
+  end
+end
+
+function Lama:buttKick()
+  if self:isServing() and not self.buttKickState.active then
+    self.buttKickState.active = true
+    self.buttKickState.cursor = 0
+  end
+end
+
+function Lama:kick()
+  if self:isServing() then
+    self:buttKick()
+  else
+    self:headKick()
   end
 end
 
@@ -146,6 +193,10 @@ function Lama:activateMotion(motion)
   self.motions[motion] = true
 end
 
+function Lama:serve()
+  self.ball.servingLama = self
+end
+
 function Lama:deactivateMotion(motion)
   self.motions[motion] = false
 
@@ -160,17 +211,43 @@ function Lama:drawShadow()
   love.graphics.draw(images.shadow, center.x - 36, center.y - 15)
 end
 
+function Lama:isServing()
+  return self.ball.servingLama and self.ball.servingLama.id == self.id
+end
+
+function Lama:getImageToDraw()
+  if self.buttKickState.active then
+    return self.images.buttKick
+  elseif self.headKickState.active then
+    return self.images.headKick
+  else
+    return self.images.motion
+  end
+end
+
+function Lama:getQuadToDraw()
+  if self.buttKickState.active then
+    return quads.buttKick
+  elseif self.headKickState.active then
+    return quads.headKick
+  else
+    return self.animation.active and quads.run[self.animation.frame] or quads.stand
+  end
+end
+
 function Lama:draw()
-  local quad = self.animation.active and quads.run[self.animation.frame] or quads.stand
   local center = self.court:getScreenPosition(self.position, true)
+  local needDirectionCorrection =
+    (self.direction == Lama.Direction.Left and not (self:isServing() and not self.buttKickState.active)) or
+    (self.direction == Lama.Direction.Right and (self:isServing() and not self.buttKickState.active))
 
   love.graphics.draw(
-    self.headKickState.active and self.images.headKick or self.images.motion,
-    self.headKickState.active and quads.headKick or quad,
-    center.x - Lama.Width / 2 + ((self.direction == Lama.Direction.Right and 0 or 1) * Lama.Width),
+    self:getImageToDraw(),
+    self:getQuadToDraw(),
+    center.x - Lama.Width / 2 + ((needDirectionCorrection and 1 or 0) * Lama.Width),
     center.y - Lama.Height,
     0,
-    self.direction == Lama.Direction.Right and 1 or -1,
+    needDirectionCorrection and -1 or 1,
     1
   )
 end

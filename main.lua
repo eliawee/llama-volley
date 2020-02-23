@@ -6,12 +6,14 @@ local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 
 local court = Court({x = 100, y = 200}, {x = 192, y = 320})
-local ball = Ball(court, 0, -50, 10)
+local ball = Ball(court, 0, 0, 100)
 
 local lamas = {
   Lama(court, ball, 0, 50, Lama.Direction.Right, Lama.Color.Red),
   Lama(court, ball, 0, -50, Lama.Direction.Left, Lama.Color.Blue)
 }
+
+lamas[1]:serve()
 
 function love.load()
   love.window.setMode(backgroundImage:getDimensions())
@@ -61,18 +63,12 @@ function love.draw()
 end
 
 function love.keypressed(key, unicode)
-  if key == "escape" then
-    ball.position.x = 0
-    ball.position.y = -50
-    ball.position.z = 10
-  end
-
   if key == "space" then
-    lamas[1]:headKick()
+    lamas[1]:kick()
   end
 
   if key == "return" or key == "kpenter" then
-    lamas[2]:headKick()
+    lamas[2]:kick()
   end
 
   if key == "up" then

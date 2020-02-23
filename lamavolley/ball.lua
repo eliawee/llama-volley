@@ -1,5 +1,6 @@
 local Object = require("lib.classic")
 local Position = require("lamavolley.position")
+local Lama = require("lamavolley.lama")
 
 local image = love.graphics.newImage("assets/images/lama-ball.png")
 local shadowImage = love.graphics.newImage("assets/images/lama-ball-shadow.png")
@@ -15,9 +16,15 @@ function Ball:new(court, x, y, z)
   self.court = court
   self.position = Position(x, y, z)
   self.velocity = {x = 0, y = 0, z = 0}
+  self.servingLama = nil
 end
 
 function Ball:update(dt)
+  if self.servingLama then
+    self.position = self.servingLama:getServingBallPosition()
+    return
+  end
+
   self.velocity.z = self.velocity.z - Ball.gravity * dt
 
   if math.abs(self.velocity.z) >= Ball.maxVelocity then
