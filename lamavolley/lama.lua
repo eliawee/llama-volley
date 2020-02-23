@@ -140,7 +140,7 @@ function Lama:update(dt)
    then
     local minBonus = 0.2
     local maxBonus = 1
-    local bonusK = (4 * minBonus - 3.5) / (4 - 3.5)
+    local bonusK = (4 * minBonus - 2) / (4 - 2)
     local bonusAlpha = (1 - bonusK) / 4
     local bonus = bonusAlpha * self.ball.position.z + bonusK
 
@@ -150,7 +150,8 @@ function Lama:update(dt)
       bonus = maxBonus
     end
 
-    self.ball.velocity.z = 70 * bonus
+    self.ball.velocity.z = 30 * bonus
+
     self.ball.velocity.y = (self.direction == Lama.Direction.Left and 100 or -100)
     self.lastKick = love.timer.getTime()
   end

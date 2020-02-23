@@ -23,6 +23,9 @@ ball:onStop(
     lamas[1].position.y = 50
     lamas[2].position.x = 0
     lamas[2].position.y = -50
+    ball.velocity.x = 0
+    ball.velocity.y = 0
+    ball.velocity.z = 0
     lastServing = lastServing == 1 and 2 or 1
     lamas[lastServing]:serve()
   end
