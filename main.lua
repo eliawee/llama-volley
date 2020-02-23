@@ -3,9 +3,7 @@ local TitleScreen = require("lamavolley.screen.title")
 
 local screen = GameScreen()
 
-local maxWidth = love.graphics.getWidth()
-local maxHeight = love.graphics.getHeight()
-
+local maxWidth, maxHeight = love.window.getDesktopDimensions()
 local needScale = maxWidth < 1408 or maxHeight < 1024
 
 local canvas = love.graphics.newCanvas(1408, 1024)
