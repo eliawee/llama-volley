@@ -105,8 +105,10 @@ function Lama:update(dt)
 end
 
 function Lama:headKick()
-  self.headKickState.active = true
-  self.headKickState.cursor = 0
+  if not self.headKickState.active then
+    self.headKickState.active = true
+    self.headKickState.cursor = 0
+  end
 end
 
 function Lama:resetRunAnimation()
