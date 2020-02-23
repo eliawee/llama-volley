@@ -1,10 +1,10 @@
-local Object = require("lib.classic")
+local Screen = require("lamavolley.screen")
 local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 local ScoreBoard = require("lamavolley.scoreboard")
 
-local GameScreen = Object:extend()
+local GameScreen = Screen:extend()
 
 local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
