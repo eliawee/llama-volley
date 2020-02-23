@@ -2,7 +2,7 @@ local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 
-local WASD = {"z", "q", "s", "d"}
+local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 
 local court = Court({x = 100, y = 200}, {x = 192, y = 320})
@@ -14,7 +14,6 @@ local lamas = {
 }
 
 function love.load()
-  print(backgroundImage:getDimensions())
   love.window.setMode(backgroundImage:getDimensions())
 end
 
@@ -72,7 +71,7 @@ function love.keypressed(key, unicode)
     lamas[1]:headKick()
   end
 
-  if key == "return" then
+  if key == "return" or key == "kpenter" then
     lamas[2]:headKick()
   end
 
