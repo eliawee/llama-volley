@@ -2,17 +2,23 @@ local Object = require("lib.classic")
 local Position = require("lamavolley.position")
 
 local images = {
-  motion = love.graphics.newImage("assets/images/lama2-Sheet.png"),
-  headKick = love.graphics.newImage("assets/images/lama2-headkick.png")
+  red = {
+    motion = love.graphics.newImage("assets/images/lama-red.png"),
+    headKick = love.graphics.newImage("assets/images/lama-red-headkick.png")
+  },
+  blue = {
+    motion = love.graphics.newImage("assets/images/lama-blue.png"),
+    headKick = love.graphics.newImage("assets/images/lama-blue-headkick.png")
+  }
 }
 
 local quads = {
-  headKick = love.graphics.newQuad(0, 0, 128, 128, images.headKick:getDimensions()),
-  stand = love.graphics.newQuad(0, 0, 128, 128, images.motion:getDimensions()),
+  headKick = love.graphics.newQuad(0, 0, 128, 128, images.red.headKick:getDimensions()),
+  stand = love.graphics.newQuad(0, 0, 128, 128, images.red.motion:getDimensions()),
   run = {
-    love.graphics.newQuad(0, 0, 128, 128, images.motion:getDimensions()),
-    love.graphics.newQuad(128, 0, 128, 128, images.motion:getDimensions()),
-    love.graphics.newQuad(256, 0, 128, 128, images.motion:getDimensions())
+    love.graphics.newQuad(0, 0, 128, 128, images.red.motion:getDimensions()),
+    love.graphics.newQuad(128, 0, 128, 128, images.red.motion:getDimensions()),
+    love.graphics.newQuad(256, 0, 128, 128, images.red.motion:getDimensions())
   }
 }
 
@@ -34,7 +40,12 @@ Lama.Motion = {
   Left = 4
 }
 
-function Lama:new(court, ball, x, y, direction)
+Lama.Color = {
+  Red = 1,
+  Blue = 2
+}
+
+function Lama:new(court, ball, x, y, direction, color)
   self.court = court
   self.ball = ball
   self.direction = direction
@@ -46,12 +57,12 @@ function Lama:new(court, ball, x, y, direction)
     frame = 1,
     active = false
   }
-
   self.headKickState = {
     active = false,
     duration = 0.2,
     cursor = 0
   }
+  self.images = color == Lama.Color.Blue and images.blue or images.red
 end
 
 function Lama:update(dt)
@@ -147,7 +158,7 @@ function Lama:draw()
   local center = self.court:getScreenPosition(self.position, true)
 
   love.graphics.draw(
-    self.headKickState.active and images.headKick or images.motion,
+    self.headKickState.active and self.images.headKick or self.images.motion,
     self.headKickState.active and quads.headKick or quad,
     center.x - Lama.Width / 2 + ((self.direction == Lama.Direction.Right and 0 or 1) * Lama.Width),
     center.y - Lama.Height,

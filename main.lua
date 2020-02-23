@@ -9,8 +9,8 @@ local court = Court({x = 100, y = 200}, {x = 192, y = 320})
 local ball = Ball(court, 0, -50, 10)
 
 local lamas = {
-  Lama(court, ball, 0, 50, Lama.Direction.Right),
-  Lama(court, ball, 0, -50, Lama.Direction.Left)
+  Lama(court, ball, 0, 50, Lama.Direction.Right, Lama.Color.Red),
+  Lama(court, ball, 0, -50, Lama.Direction.Left, Lama.Color.Blue)
 }
 
 function love.load()
