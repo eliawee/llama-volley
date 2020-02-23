@@ -138,6 +138,7 @@ function Lama:update(dt)
 
   if self:isServing() and self.buttKickState.active then
     self.ball.velocity.z = 30
+    self.ball.lastKickingLama = self
     self.ball.servingLama = nil
   end
 
@@ -166,6 +167,7 @@ function Lama:update(dt)
     self.ball.velocity.y = (self.direction == Lama.Direction.Left and 100 or -100)
     self.lastKick = love.timer.getTime()
 
+    self.ball.lastKickingLama = self
     self.ball:showPrediction()
   end
 end

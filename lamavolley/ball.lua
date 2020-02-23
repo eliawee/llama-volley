@@ -22,7 +22,11 @@ function Ball:new(court, x, y, z)
 end
 
 function Ball:onStop(listener)
-  self.listener = listener
+  self.onStopListener = listener
+end
+
+function Ball:onFall(listener)
+  self.onFallListener = listener
 end
 
 function Ball:showPrediction()
@@ -65,6 +69,10 @@ function Ball:update(dt)
   self.position.z = self.position.z + self.velocity.z * dt
 
   if self.position.z <= 0.5 then
+    if self.playable and self.onFallListener then
+      self.onFallListener()
+    end
+
     self.playable = false
 
     if self.velocity.z < 0 then
@@ -75,8 +83,8 @@ function Ball:update(dt)
 
     self.position.z = 0.5
 
-    if math.abs(self.velocity.z) < 1 and self.listener then
-      self.listener()
+    if math.abs(self.velocity.z) < 1 and self.onStopListener then
+      self.onStopListener()
     end
   else
     local lastY = self.position.y
