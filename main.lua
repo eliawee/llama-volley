@@ -26,6 +26,7 @@ ball:onStop(
     ball.velocity.x = 0
     ball.velocity.y = 0
     ball.velocity.z = 0
+    ball.prediction = nil
     lastServing = lastServing == 1 and 2 or 1
     lamas[lastServing]:serve()
   end
@@ -54,6 +55,7 @@ function love.draw()
   end
 
   ball:drawShadow()
+  ball:drawPrediction()
 
   if ball.position.y > 0 then
     lamas[2]:draw()

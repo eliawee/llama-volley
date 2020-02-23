@@ -4,6 +4,7 @@ local Lama = require("lamavolley.lama")
 
 local image = love.graphics.newImage("assets/images/lama-ball.png")
 local shadowImage = love.graphics.newImage("assets/images/lama-ball-shadow.png")
+local targetImage = love.graphics.newImage("assets/images/lama-ball-target.png")
 
 local Ball = Object:extend()
 
@@ -15,13 +16,38 @@ Ball.Height = 32
 function Ball:new(court, x, y, z)
   self.court = court
   self.position = Position(x, y, z)
-  self.velocity = {x = 0, y = 0, z = 0}
+  self.velocity = Position(0, 0, 0)
   self.servingLama = nil
   self.playable = true
 end
 
 function Ball:onStop(listener)
   self.listener = listener
+end
+
+function Ball:showPrediction()
+  self.prediction = self:predictFallPosition()
+end
+
+function Ball:predictFallPosition()
+  local position = self.position:clone()
+  local velocity = self.velocity:clone()
+
+  local dt = 0.16
+
+  while position.z > 0.5 do
+    velocity.z = velocity.z - Ball.gravity * dt
+
+    if math.abs(velocity.z) >= Ball.maxVelocity then
+      velocity.z = (velocity.z / math.abs(velocity.z)) * Ball.maxVelocity
+    end
+
+    position.x = position.x + velocity.x * dt
+    position.y = position.y + velocity.y * dt
+    position.z = position.z + velocity.z * dt
+  end
+
+  return position
 end
 
 function Ball:update(dt)
@@ -68,6 +94,14 @@ function Ball:drawShadow()
   local center = self.court:getScreenPosition(self.position, false)
 
   love.graphics.draw(shadowImage, center.x - Ball.Width / 2, center.y - Ball.Height / 2)
+end
+
+function Ball:drawPrediction()
+  if self.prediction then
+    local center = self.court:getScreenPosition(self.prediction, false)
+
+    love.graphics.draw(targetImage, center.x - 32, center.y - 24)
+  end
 end
 
 return Ball
