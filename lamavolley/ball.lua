@@ -19,6 +19,10 @@ function Ball:new(court, x, y, z)
   self.servingLama = nil
 end
 
+function Ball:onStop(listener)
+  self.listener = listener
+end
+
 function Ball:update(dt)
   if self.servingLama then
     self.position = self.servingLama:getServingBallPosition()
@@ -41,6 +45,10 @@ function Ball:update(dt)
     end
 
     self.position.z = 0.5
+
+    if math.abs(self.velocity.z) < 1 and self.listener then
+      self.listener()
+    end
   else
     self.position.x = self.position.x + self.velocity.x * dt
     self.position.y = self.position.y + self.velocity.y * dt

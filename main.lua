@@ -13,7 +13,20 @@ local lamas = {
   Lama(court, ball, 0, -50, Lama.Direction.Left, Lama.Color.Blue)
 }
 
+local lastServing = 1
+
 lamas[1]:serve()
+
+ball:onStop(
+  function()
+    lamas[1].position.x = 0
+    lamas[1].position.y = 50
+    lamas[2].position.x = 0
+    lamas[2].position.y = -50
+    lastServing = lastServing == 1 and 2 or 1
+    lamas[lastServing]:serve()
+  end
+)
 
 function love.load()
   love.window.setMode(backgroundImage:getDimensions())
