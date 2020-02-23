@@ -13,6 +13,8 @@ Screen.onNavigate(
   function(screenName)
     if screenName == "game" then
       screen = GameScreen()
+    elseif screenName == "title" then
+      screen = TitleScreen()
     end
   end
 )

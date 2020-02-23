@@ -8,6 +8,8 @@ local GameScreen = Screen:extend()
 
 local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
+local redWinnerImage = love.graphics.newImage("assets/images/lama-redwins.png")
+local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png")
 
 function GameScreen:new()
   self.court = Court({x = 100, y = 200}, {x = 192, y = 320}, 6)
@@ -31,6 +33,17 @@ function GameScreen:new()
       self:onBallStop()
     end
   )
+
+  self.scoreBoard:onLamaWin(
+    function(winner)
+      self.winner = winner
+    end
+  )
+
+  self.winnerAnimation = {
+    duration = 1,
+    cursor = 0
+  }
 
   self.lamas[1]:serve()
 end
@@ -74,6 +87,14 @@ function GameScreen:onBallStop()
 end
 
 function GameScreen:update(dt)
+  if self.winner then
+    if self.winnerAnimation.cursor < self.winnerAnimation.duration then
+      self.winnerAnimation.cursor = self.winnerAnimation.cursor + dt
+    end
+
+    return
+  end
+
   for index, lama in pairs(self.lamas) do
     lama:update(dt)
   end
@@ -115,9 +136,25 @@ function GameScreen:draw()
       self.ball:draw()
     end
   end
+
+  love.graphics.setColor(1, 1, 1, self.winnerAnimation.cursor / self.winnerAnimation.duration)
+  if self.winner == Lama.Color.Red then
+    love.graphics.draw(redWinnerImage, 0, 0)
+  elseif self.winner == Lama.Color.Blue then
+    love.graphics.draw(blueWinnerImage, 0, 0)
+  end
+  love.graphics.setColor(1, 1, 1, 1)
 end
 
 function GameScreen:keypressed(key)
+  if self.winner == Lama.Color.Red or self.winner == Lama.Color.Blue then
+    if self.winnerAnimation.cursor >= self.winnerAnimation.duration and key == "return" or key == "kpenter" then
+      self:navigate("title")
+    end
+
+    return
+  end
+
   if key == "space" then
     self.lamas[1]:kick()
   end
