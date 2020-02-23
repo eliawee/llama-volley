@@ -84,7 +84,7 @@ function Lama:update(dt)
     self.position:translate(dt * Lama.Velocity, 0)
   end
 
-  if self.motions[Lama.Motion.Right] == true then
+  if self.motions[Lama.Motion.Right] == true and self.position.y - dt * Lama.Velocity - 5 > self.court.netHeight then
     self.position:translate(0, -dt * Lama.Velocity)
   end
 
@@ -92,7 +92,7 @@ function Lama:update(dt)
     self.position:translate(-dt * Lama.Velocity, 0)
   end
 
-  if self.motions[Lama.Motion.Left] == true then
+  if self.motions[Lama.Motion.Left] == true and self.position.y + dt * Lama.Velocity + 15 < self.court.netHeight then
     self.position:translate(0, dt * Lama.Velocity)
   end
 
