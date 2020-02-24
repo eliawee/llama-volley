@@ -25,9 +25,9 @@ function love.load()
   love.window.setMode(needScale and 1408 / 2 or 1408, needScale and 1024 / 2 or 1024)
   love.window.setTitle("Pro League Llama V'Ball Championship")
 
-  SubSource(music, 5, 10):play()
-  -- music:setLooping(true)
-  -- music:play()
+  --SubSource(music, 5, 10):play()
+  music:setLooping(true)
+  music:play()
 end
 
 function love.update(dt)

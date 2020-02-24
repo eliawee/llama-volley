@@ -169,6 +169,7 @@ function Lama:update(dt)
 
     self.ball.lastKickingLama = self
     self.ball:showPrediction()
+    self.ball:playSound()
   end
 end
 

@@ -10,9 +10,10 @@ local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 local redWinnerImage = love.graphics.newImage("assets/images/lama-redwins.png")
 local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png")
+local applauseSound = love.audio.newSource("assets/sounds/applause.wav", "static")
 
 function GameScreen:new()
-  self.court = Court({x = 100, y = 200}, {x = 192, y = 320}, 6)
+  self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 6)
   self.ball = Ball(self.court, 0, 0, 100)
   self.scoreBoard = ScoreBoard(self.court)
   self.lamas = {
@@ -37,6 +38,7 @@ function GameScreen:new()
   self.scoreBoard:onLamaWin(
     function(winner)
       self.winner = winner
+      applauseSound:play()
     end
   )
 
@@ -150,6 +152,7 @@ function GameScreen:keypressed(key)
   if self.winner == Lama.Color.Red or self.winner == Lama.Color.Blue then
     if self.winnerAnimation.cursor >= self.winnerAnimation.duration and key == "return" or key == "kpenter" then
       self:navigate("title")
+      applauseSound:stop()
     end
 
     return

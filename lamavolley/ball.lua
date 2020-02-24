@@ -5,6 +5,12 @@ local Lama = require("lamavolley.lama")
 local image = love.graphics.newImage("assets/images/lama-ball.png")
 local shadowImage = love.graphics.newImage("assets/images/lama-ball-shadow.png")
 local targetImage = love.graphics.newImage("assets/images/lama-ball-target.png")
+local ballSounds = {
+  love.audio.newSource("assets/sounds/qubodupPunch01.ogg", "static"),
+  love.audio.newSource("assets/sounds/qubodupPunch02.ogg", "static"),
+  love.audio.newSource("assets/sounds/qubodupPunch03.ogg", "static"),
+  love.audio.newSource("assets/sounds/qubodupPunch04.ogg", "static")
+}
 
 local Ball = Object:extend()
 
@@ -19,6 +25,10 @@ function Ball:new(court, x, y, z)
   self.velocity = Position(0, 0, 0)
   self.servingLama = nil
   self.playable = true
+end
+
+function Ball:playSound()
+  ballSounds[love.math.random(# ballSounds)]:play()
 end
 
 function Ball:onStop(listener)
@@ -72,6 +82,8 @@ function Ball:update(dt)
     if self.playable and self.onFallListener then
       self.onFallListener()
     end
+
+    self.playSound()
 
     self.playable = false
 
