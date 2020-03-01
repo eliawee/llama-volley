@@ -1,12 +1,13 @@
-local Screen = require("lamavolley.screen")
 local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
+local Player1Controller = require("lamavolley.controller.player1")
+local Player2Controller = require("lamavolley.controller.player2")
+local Screen = require("lamavolley.screen")
 local ScoreBoard = require("lamavolley.scoreboard")
 
 local GameScreen = Screen:extend()
 
-local WASD = {"w", "a", "s", "d"}
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 local redWinnerImage = love.graphics.newImage("assets/images/lama-redwins.png")
 local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png")
@@ -19,6 +20,11 @@ function GameScreen:new()
   self.lamas = {
     Lama(self.court, self.ball, 0, 50, Lama.Direction.Right, Lama.Color.Red),
     Lama(self.court, self.ball, 0, -50, Lama.Direction.Left, Lama.Color.Blue)
+  }
+
+  self.controllers = {
+    Player1Controller(self.lamas[1]),
+    Player2Controller(self.lamas[2])
   }
 
   self.lastServing = 1
@@ -154,82 +160,16 @@ function GameScreen:keypressed(key)
       self:navigate("title")
       applauseSound:stop()
     end
-
-    return
-  end
-
-  if key == "space" then
-    self.lamas[1]:kick()
-  end
-
-  if key == "return" or key == "kpenter" then
-    self.lamas[2]:kick()
-  end
-
-  if key == "up" then
-    self.lamas[2]:activateMotion(Lama.Motion.Up)
-  end
-
-  if key == "right" then
-    self.lamas[2]:activateMotion(Lama.Motion.Right)
-  end
-
-  if key == "down" then
-    self.lamas[2]:activateMotion(Lama.Motion.Down)
-  end
-
-  if key == "left" then
-    self.lamas[2]:activateMotion(Lama.Motion.Left)
-  end
-
-  if key == WASD[1] then
-    self.lamas[1]:activateMotion(Lama.Motion.Up)
-  end
-
-  if key == WASD[4] then
-    self.lamas[1]:activateMotion(Lama.Motion.Right)
-  end
-
-  if key == WASD[3] then
-    self.lamas[1]:activateMotion(Lama.Motion.Down)
-  end
-
-  if key == WASD[2] then
-    self.lamas[1]:activateMotion(Lama.Motion.Left)
+  else
+    for index, controller in pairs(self.controllers) do
+      controller:keypressed(key)
+    end
   end
 end
 
 function GameScreen:keyreleased(key, unicode)
-  if key == "up" then
-    self.lamas[2]:deactivateMotion(Lama.Motion.Up)
-  end
-
-  if key == "right" then
-    self.lamas[2]:deactivateMotion(Lama.Motion.Right)
-  end
-
-  if key == "down" then
-    self.lamas[2]:deactivateMotion(Lama.Motion.Down)
-  end
-
-  if key == "left" then
-    self.lamas[2]:deactivateMotion(Lama.Motion.Left)
-  end
-
-  if key == WASD[1] then
-    self.lamas[1]:deactivateMotion(Lama.Motion.Up)
-  end
-
-  if key == WASD[4] then
-    self.lamas[1]:deactivateMotion(Lama.Motion.Right)
-  end
-
-  if key == WASD[3] then
-    self.lamas[1]:deactivateMotion(Lama.Motion.Down)
-  end
-
-  if key == WASD[2] then
-    self.lamas[1]:deactivateMotion(Lama.Motion.Left)
+  for index, controller in pairs(self.controllers) do
+    controller:keyreleased(key)
   end
 end
 
