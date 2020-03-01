@@ -24,8 +24,8 @@ function GameScreen:new()
   }
 
   self.controllers = {
-    Player1Controller(self.lamas[1]),
-    CPUController(self.lamas[2])
+    CPUController(self.lamas[1]),
+    Player2Controller(self.lamas[2])
   }
 
   self.lastServing = 1
