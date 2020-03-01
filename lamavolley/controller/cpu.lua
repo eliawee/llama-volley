@@ -101,10 +101,16 @@ end
 function CPUController:new(lama)
   self.lama = lama
   self.state = IdleState(self)
+  self.lastStateUpdateDelta = 0
 end
 
 function CPUController:update(dt)
-  self.state:update(dt)
+  self.lastStateUpdateDelta = self.lastStateUpdateDelta + dt
+
+  if not ReceiveBallState:is(self.state) or self.lastStateUpdateDelta >= 2 then
+    self.state:update(dt)
+    self.lastStateUpdateDelta = 0
+  end
 end
 
 function CPUController:keypressed()
