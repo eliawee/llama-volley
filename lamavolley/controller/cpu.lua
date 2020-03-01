@@ -69,7 +69,7 @@ function ReceiveBallState:update()
   self.prediction =
     self.prediction or self.ball.prediction:clone():translate(math.random(-12, 12), math.random(-12, 12), 0)
 
-  self.zTarget = self.zTarget or math.random(2, 4)
+  self.zTarget = self.zTarget or math.random(3.5, 4)
 
   if self.lama.position.y > self.prediction.y and math.abs(self.lama.position.y - self.prediction.y) > 1 then
     self.lama:activateMotion(Lama.Motion.Right)
