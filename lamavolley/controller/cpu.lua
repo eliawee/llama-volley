@@ -66,10 +66,15 @@ function ReceiveBallState:update()
     return
   end
 
-  if self.lama.position.y > self.ball.prediction.y and math.abs(self.lama.position.y - self.ball.prediction.y) > 0.5 then
+  self.prediction =
+    self.prediction or self.ball.prediction:clone():translate(math.random(-12, 12), math.random(-12, 12), 0)
+
+  self.zTarget = self.zTarget or math.random(2, 4)
+
+  if self.lama.position.y > self.prediction.y and math.abs(self.lama.position.y - self.prediction.y) > 1 then
     self.lama:activateMotion(Lama.Motion.Right)
     self.lama:deactivateMotion(Lama.Motion.Left)
-  elseif self.lama.position.y < self.ball.prediction.y and math.abs(self.lama.position.y - self.ball.prediction.y) > 0.5 then
+  elseif self.lama.position.y < self.prediction.y and math.abs(self.lama.position.y - self.prediction.y) > 1 then
     self.lama:deactivateMotion(Lama.Motion.Right)
     self.lama:activateMotion(Lama.Motion.Left)
   else
@@ -77,10 +82,10 @@ function ReceiveBallState:update()
     self.lama:deactivateMotion(Lama.Motion.Left)
   end
 
-  if self.lama.position.x > self.ball.prediction.x and math.abs(self.lama.position.x - self.ball.prediction.x) > 0.5 then
+  if self.lama.position.x > self.prediction.x and math.abs(self.lama.position.x - self.prediction.x) > 1 then
     self.lama:activateMotion(Lama.Motion.Down)
     self.lama:deactivateMotion(Lama.Motion.Up)
-  elseif self.lama.position.x < self.ball.prediction.x and math.abs(self.lama.position.x - self.ball.prediction.x) > 0.5 then
+  elseif self.lama.position.x < self.prediction.x and math.abs(self.lama.position.x - self.prediction.x) > 1 then
     self.lama:deactivateMotion(Lama.Motion.Down)
     self.lama:activateMotion(Lama.Motion.Up)
   else
@@ -89,9 +94,8 @@ function ReceiveBallState:update()
   end
 
   if
-    math.abs(self.lama.position.y - self.ball.prediction.y) <= 0.5 and
-      math.abs(self.lama.position.x - self.ball.prediction.x) <= 0.5 and
-      self.ball.position.z <= 4
+    math.abs(self.lama.position.y - self.prediction.y) <= 1 and math.abs(self.lama.position.x - self.prediction.x) <= 1 and
+      self.ball.position.z <= self.zTarget
    then
     self.lama:kick()
     self:changeState(IdleState)
@@ -101,16 +105,10 @@ end
 function CPUController:new(lama)
   self.lama = lama
   self.state = IdleState(self)
-  self.lastStateUpdateDelta = 0
 end
 
 function CPUController:update(dt)
-  self.lastStateUpdateDelta = self.lastStateUpdateDelta + dt
-
-  if not ReceiveBallState:is(self.state) or self.lastStateUpdateDelta >= 2 then
-    self.state:update(dt)
-    self.lastStateUpdateDelta = 0
-  end
+  self.state:update(dt)
 end
 
 function CPUController:keypressed()
