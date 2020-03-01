@@ -66,15 +66,19 @@ function ReceiveBallState:update()
     return
   end
 
-  self.prediction =
-    self.prediction or self.ball.prediction:clone():translate(math.random(-12, 12), math.random(-12, 12), 0)
+  if not self.target then
+    local distance = math.random(0, 10)
+    local angle = math.random(0, 2 * math.pi)
 
-  self.zTarget = self.zTarget or math.random(3.5, 4)
+    self.target = self.ball.prediction:clone():translate(distance * math.cos(angle), distance * math.sin(angle), 0)
+  end
 
-  if self.lama.position.y > self.prediction.y and math.abs(self.lama.position.y - self.prediction.y) > 1 then
+  self.zTarget = self.zTarget or math.random(3.6, 4)
+
+  if self.lama.position.y > self.target.y and math.abs(self.lama.position.y - self.target.y) > 1 then
     self.lama:activateMotion(Lama.Motion.Right)
     self.lama:deactivateMotion(Lama.Motion.Left)
-  elseif self.lama.position.y < self.prediction.y and math.abs(self.lama.position.y - self.prediction.y) > 1 then
+  elseif self.lama.position.y < self.target.y and math.abs(self.lama.position.y - self.target.y) > 1 then
     self.lama:deactivateMotion(Lama.Motion.Right)
     self.lama:activateMotion(Lama.Motion.Left)
   else
@@ -82,10 +86,10 @@ function ReceiveBallState:update()
     self.lama:deactivateMotion(Lama.Motion.Left)
   end
 
-  if self.lama.position.x > self.prediction.x and math.abs(self.lama.position.x - self.prediction.x) > 1 then
+  if self.lama.position.x > self.target.x and math.abs(self.lama.position.x - self.target.x) > 1 then
     self.lama:activateMotion(Lama.Motion.Down)
     self.lama:deactivateMotion(Lama.Motion.Up)
-  elseif self.lama.position.x < self.prediction.x and math.abs(self.lama.position.x - self.prediction.x) > 1 then
+  elseif self.lama.position.x < self.target.x and math.abs(self.lama.position.x - self.target.x) > 1 then
     self.lama:deactivateMotion(Lama.Motion.Down)
     self.lama:activateMotion(Lama.Motion.Up)
   else
@@ -94,7 +98,7 @@ function ReceiveBallState:update()
   end
 
   if
-    math.abs(self.lama.position.y - self.prediction.y) <= 1 and math.abs(self.lama.position.x - self.prediction.x) <= 1 and
+    math.abs(self.lama.position.y - self.target.y) <= 1 and math.abs(self.lama.position.x - self.target.x) <= 1 and
       self.ball.position.z <= self.zTarget
    then
     self.lama:kick()
