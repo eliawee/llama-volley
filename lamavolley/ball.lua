@@ -108,10 +108,15 @@ function Ball:update(dt)
         self.position.z < self.court.netHeight
      then
       local direction = -1 * (math.abs(self.velocity.y) / self.velocity.y)
+      self.touchedNet = false
       self.position.y = lastY
       self.velocity.y = direction * 20
     end
   end
+end
+
+function Ball:sameSideAs(lama)
+  return (self.position.y > 0 and lama.position.y > 0) or (self.position.y < 0 and lama.position.y < 0)
 end
 
 function Ball:draw()

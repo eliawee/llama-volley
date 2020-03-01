@@ -143,7 +143,7 @@ function Lama:update(dt)
   end
 
   if
-    self.headKickState.active and (not self.lastKick or love.timer.getTime() - self.lastKick > 0.5) and
+    self.ball:sameSideAs(self) and not self.ball.touchedNet and self.headKickState.active and (not self.lastKick or love.timer.getTime() - self.lastKick > 0.5) and
       self.ball.playable and
       self.ball.position.z <= 4 and
       self.ball.position.z > 2 and
@@ -229,6 +229,7 @@ end
 function Lama:serve()
   self.ball.servingLama = self
   self.ball.playable = true
+  self.ball.touchedNet = false
 end
 
 function Lama:deactivateMotion(motion)

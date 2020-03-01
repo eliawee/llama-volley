@@ -9,6 +9,7 @@ function State:new(controller)
   self.controller = controller
   self.lama = self.controller.lama
   self.ball = self.lama.ball
+  self.court = self.lama.court
 end
 
 function State:update(dt)
@@ -62,12 +63,12 @@ function ReceiveBallState:update()
     return
   end
 
-  if not self.ball.prediction then
+  if not self.ball.prediction or math.abs(self.ball.prediction.x) > self.court.dimensions.x / 2 or math.abs(self.ball.prediction.y) > self.court.dimensions.y / 2 then
     return
   end
 
   if not self.target then
-    local distance = math.random(0, 10)
+    local distance = math.random(0, 5)
     local angle = math.random(0, 2 * math.pi)
 
     self.target = self.ball.prediction:clone():translate(distance * math.cos(angle), distance * math.sin(angle), 0)
