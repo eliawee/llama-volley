@@ -7,6 +7,10 @@ function Player2Controller:new(lama)
   self.lama = lama
 end
 
+function Player2Controller:update(dt)
+  -- nothing to do here
+end
+
 function Player2Controller:keypressed(key)
   if key == "return" or key == "kpenter" then
     self.lama:kick()

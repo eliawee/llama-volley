@@ -3,10 +3,14 @@ local Lama = require("lamavolley.lama")
 
 local Player1Controller = Object:extend()
 
-local WASD = {"w", "a", "s", "d"}
+local WASD = {"z", "q", "s", "d"}
 
 function Player1Controller:new(lama)
   self.lama = lama
+end
+
+function Player1Controller:update(dt)
+  -- nothing to do here
 end
 
 function Player1Controller:keypressed(key)

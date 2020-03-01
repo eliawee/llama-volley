@@ -3,6 +3,7 @@ local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
 local Player1Controller = require("lamavolley.controller.player1")
 local Player2Controller = require("lamavolley.controller.player2")
+local CPUController = require("lamavolley.controller.cpu")
 local Screen = require("lamavolley.screen")
 local ScoreBoard = require("lamavolley.scoreboard")
 
@@ -24,7 +25,7 @@ function GameScreen:new()
 
   self.controllers = {
     Player1Controller(self.lamas[1]),
-    Player2Controller(self.lamas[2])
+    CPUController(self.lamas[2])
   }
 
   self.lastServing = 1
@@ -103,6 +104,12 @@ function GameScreen:update(dt)
     return
   end
 
+  if self.winner == nil then
+    for index, controller in pairs(self.controllers) do
+      controller:update(dt)
+    end
+  end
+
   for index, lama in pairs(self.lamas) do
     lama:update(dt)
   end
@@ -168,8 +175,10 @@ function GameScreen:keypressed(key)
 end
 
 function GameScreen:keyreleased(key, unicode)
-  for index, controller in pairs(self.controllers) do
-    controller:keyreleased(key)
+  if self.winner == nil then
+    for index, controller in pairs(self.controllers) do
+      controller:keyreleased(key)
+    end
   end
 end
 
