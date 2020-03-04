@@ -15,7 +15,7 @@ local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png"
 local applauseSound = love.audio.newSource("assets/sounds/applause.wav", "static")
 
 function GameScreen:new()
-  self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 6)
+  self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 5)
   self.ball = Ball(self.court, 0, 0, 100)
   self.scoreBoard = ScoreBoard(self.court)
   self.lamas = {

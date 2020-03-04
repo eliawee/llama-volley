@@ -28,7 +28,7 @@ function Ball:new(court, x, y, z)
 end
 
 function Ball:playSound()
-  ballSounds[love.math.random(# ballSounds)]:play()
+  ballSounds[love.math.random(#ballSounds)]:play()
 end
 
 function Ball:onStop(listener)
@@ -67,52 +67,60 @@ end
 function Ball:update(dt)
   if self.servingLama then
     self.position = self.servingLama:getServingBallPosition()
-    return
-  end
-
-  self.velocity.z = self.velocity.z - Ball.gravity * dt
-
-  if math.abs(self.velocity.z) >= Ball.maxVelocity then
-    self.velocity.z = (self.velocity.z / math.abs(self.velocity.z)) * Ball.maxVelocity
-  end
-
-  self.position.z = self.position.z + self.velocity.z * dt
-
-  if self.position.z <= 0.5 then
-    if self.playable and self.onFallListener then
-      self.onFallListener()
-    end
-
-    self.playSound()
-
-    self.playable = false
-
-    if self.velocity.z < 0 then
-      self.velocity.z = -self.velocity.z / 2
-      self.velocity.x = self.velocity.x / 2
-      self.velocity.y = self.velocity.y / 2
-    end
-
-    self.position.z = 0.5
-
-    if math.abs(self.velocity.z) < 1 and self.onStopListener then
-      self.onStopListener()
-    end
   else
-    local lastY = self.position.y
-    self.position.x = self.position.x + self.velocity.x * dt
-    self.position.y = self.position.y + self.velocity.y * dt
+    self.velocity.z = self.velocity.z - Ball.gravity * dt
 
-    if
-      ((self.position.y < 0 and lastY >= 0) or (self.position.y > 0 and lastY <= 0)) and
-        self.position.z < self.court.netHeight
-     then
-      local direction = -1 * (math.abs(self.velocity.y) / self.velocity.y)
-      self.touchedNet = false
-      self.position.y = lastY
-      self.velocity.y = direction * 20
+    if math.abs(self.velocity.z) >= Ball.maxVelocity then
+      self.velocity.z = (self.velocity.z / math.abs(self.velocity.z)) * Ball.maxVelocity
+    end
+
+    self.position.z = self.position.z + self.velocity.z * dt
+
+    if self.position.z <= 0.5 then
+      if self.playable and self.onFallListener then
+        self.onFallListener()
+      end
+
+      self.playSound()
+
+      self.playable = false
+
+      if self.velocity.z < 0 then
+        self.velocity.z = -self.velocity.z / 2
+        self.velocity.x = self.velocity.x / 2
+        self.velocity.y = self.velocity.y / 2
+      end
+
+      self.position.z = 0.5
+
+      if math.abs(self.velocity.z) < 1 and self.onStopListener then
+        self.onStopListener()
+      end
+    else
+      local lastY = self.position.y
+      self.position.x = self.position.x + self.velocity.x * dt
+      self.position.y = self.position.y + self.velocity.y * dt
+
+      if
+        ((self.position.y < 0 and lastY >= 0) or (self.position.y > 0 and lastY <= 0)) and
+          self.position.z < self.court.netHeight
+       then
+        local direction = -1 * (math.abs(self.velocity.y) / self.velocity.y)
+        self.touchedNet = false
+        self.position.y = lastY
+        self.velocity.y = direction * 20
+      end
     end
   end
+
+  self.center = self.court:getScreenPosition(self.position, true)
+  self.shadowCenter = self.court:getScreenPosition(self.position, false)
+
+  local scale = self.position.z <= 4 and 1 or (self.position.z - 4) * 0.5 / 6 + 1
+  local maxVelocityScale =
+    math.abs(self.velocity.z) > math.abs(self.velocity.y) and math.abs(self.velocity.z) or math.abs(self.velocity.y)
+  self.scaleX = (maxVelocityScale == 0 and 1 or ((math.abs(self.velocity.y) / maxVelocityScale) * 0.08 + 1)) * scale
+  self.scaleY = (maxVelocityScale == 0 and 1 or ((math.abs(self.velocity.z) / maxVelocityScale) * 0.08 + 1)) * scale
 end
 
 function Ball:sameSideAs(lama)
@@ -120,15 +128,22 @@ function Ball:sameSideAs(lama)
 end
 
 function Ball:draw()
-  local center = self.court:getScreenPosition(self.position, true)
-
-  love.graphics.draw(image, center.x - Ball.Width / 2, center.y - Ball.Height / 2)
+  if self.center then
+    love.graphics.draw(
+      image,
+      self.center.x - Ball.Width * self.scaleX / 2,
+      self.center.y - Ball.Height * self.scaleY / 2,
+      0,
+      self.scaleX,
+      self.scaleY
+    )
+  end
 end
 
 function Ball:drawShadow()
-  local center = self.court:getScreenPosition(self.position, false)
-
-  love.graphics.draw(shadowImage, center.x - Ball.Width / 2, center.y - Ball.Height / 2)
+  if self.shadowCenter then
+    love.graphics.draw(shadowImage, self.shadowCenter.x - Ball.Width / 2, self.shadowCenter.y - Ball.Height / 2)
+  end
 end
 
 function Ball:drawPrediction()
