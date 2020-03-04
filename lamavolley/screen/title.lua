@@ -16,14 +16,18 @@ function TitleScreen:draw()
   love.graphics.print("LLAMARTIST: Estelle Martinez", 300, 850)
   love.graphics.print("ALPACODER: David Corticchiato", 300, 880)
   love.graphics.setFont(fontSmaller)
-  love.graphics.print("Music: 06-06-19 synthwave by Spring (https://opengameart.org/content/06-06-19-synthwave)", 10, 980)
+  love.graphics.print(
+    "Music: 06-06-19 synthwave by Spring (https://opengameart.org/content/06-06-19-synthwave)",
+    10,
+    980
+  )
   love.graphics.print("Sounds: Applause by Blender Foundation (https://opengameart.org/content/applause)", 10, 995)
   love.graphics.setColor(1, 1, 1, 1)
 end
 
 function TitleScreen:keypressed(key)
   if key == "return" or key == "kpenter" then
-    self:navigate("game")
+    self:navigate("mode")
   end
 end
 
