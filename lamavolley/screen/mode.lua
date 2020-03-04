@@ -1,3 +1,4 @@
+local input = require("lamavolley.input")
 local Court = require("lamavolley.court")
 local Screen = require("lamavolley.screen")
 
@@ -7,6 +8,12 @@ local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 
 function ModeScreen:new()
   self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 6)
+end
+
+function ModeScreen:update()
+  if input.anyActionPressed() then
+    self:navigate("game")
+  end
 end
 
 function ModeScreen:draw()
@@ -26,12 +33,6 @@ function ModeScreen:draw()
   -- )
   -- love.graphics.print("Sounds: Applause by Blender Foundation (https://opengameart.org/content/applause)", 10, 995)
   -- love.graphics.setColor(1, 1, 1, 1)
-end
-
-function ModeScreen:keypressed(key)
-  if key == "return" or key == "kpenter" then
-    self:navigate("game")
-  end
 end
 
 return ModeScreen

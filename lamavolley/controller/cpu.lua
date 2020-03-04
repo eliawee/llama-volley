@@ -63,7 +63,10 @@ function ReceiveBallState:update()
     return
   end
 
-  if not self.ball.prediction or math.abs(self.ball.prediction.x) > self.court.dimensions.x / 2 or math.abs(self.ball.prediction.y) > self.court.dimensions.y / 2 then
+  if
+    not self.ball.prediction or math.abs(self.ball.prediction.x) > self.court.dimensions.x / 2 or
+      math.abs(self.ball.prediction.y) > self.court.dimensions.y / 2
+   then
     return
   end
 
@@ -114,14 +117,6 @@ end
 
 function CPUController:update(dt)
   self.state:update(dt)
-end
-
-function CPUController:keypressed()
-  -- nothing to do here
-end
-
-function CPUController:keyreleased()
-  -- nothing to do here
 end
 
 return CPUController

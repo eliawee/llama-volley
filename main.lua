@@ -1,3 +1,5 @@
+local input = require("lamavolley.input")
+
 local maxWidth, maxHeight = love.window.getDesktopDimensions()
 local needScale = maxWidth < 1408 or maxHeight < 1024
 
@@ -38,39 +40,26 @@ function love.load()
 
   state.music:setLooping(true)
   state.music:play()
-  state.loaded = true
 end
 
 function love.update(dt)
-  if state.loaded then
-    state.screen:update(dt)
+  for index, player in pairs(input.players) do
+    player:update()
   end
+
+  state.screen:update(dt)
 end
 
 function love.draw()
-  if state.loaded then
-    if needScale then
-      love.graphics.setCanvas(state.canvas)
-      love.graphics.clear()
-    end
-
-    state.screen:draw()
-
-    if needScale then
-      love.graphics.setCanvas()
-      love.graphics.draw(state.canvas, 0, 0, 0, 0.5, 0.5)
-    end
+  if needScale then
+    love.graphics.setCanvas(state.canvas)
+    love.graphics.clear()
   end
-end
 
-function love.keypressed(key, unicode)
-  if state.loaded then
-    state.screen:keypressed(key, unicode)
-  end
-end
+  state.screen:draw()
 
-function love.keyreleased(key, unicode)
-  if state.loaded then
-    state.screen:keyreleased(key, unicode)
+  if needScale then
+    love.graphics.setCanvas()
+    love.graphics.draw(state.canvas, 0, 0, 0, 0.5, 0.5)
   end
 end

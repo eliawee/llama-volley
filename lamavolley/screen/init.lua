@@ -14,12 +14,6 @@ end
 function Screen:draw()
 end
 
-function Screen:keypressed()
-end
-
-function Screen:keyreleased()
-end
-
 function Screen:navigate(name)
   if navigationListener then
     navigationListener(name)

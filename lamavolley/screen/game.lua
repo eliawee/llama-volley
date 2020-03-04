@@ -1,8 +1,8 @@
+local input = require("lamavolley.input")
 local Ball = require("lamavolley.ball")
 local Court = require("lamavolley.court")
 local Lama = require("lamavolley.lama")
-local Player1Controller = require("lamavolley.controller.player1")
-local Player2Controller = require("lamavolley.controller.player2")
+local PlayerController = require("lamavolley.controller.player")
 local CPUController = require("lamavolley.controller.cpu")
 local Screen = require("lamavolley.screen")
 local ScoreBoard = require("lamavolley.scoreboard")
@@ -24,8 +24,8 @@ function GameScreen:new()
   }
 
   self.controllers = {
-    Player1Controller(self.lamas[1]),
-    Player2Controller(self.lamas[2])
+    PlayerController(self.lamas[1], input.players[1]),
+    PlayerController(self.lamas[2], input.players[2])
   }
 
   self.lastServing = 1
@@ -99,6 +99,9 @@ function GameScreen:update(dt)
   if self.winner then
     if self.winnerAnimation.cursor < self.winnerAnimation.duration then
       self.winnerAnimation.cursor = self.winnerAnimation.cursor + dt
+    elseif input.anyActionPressed() then
+      self:navigate("title")
+      applauseSound:stop()
     end
 
     return
@@ -159,27 +162,6 @@ function GameScreen:draw()
     love.graphics.draw(blueWinnerImage, 0, 0)
   end
   love.graphics.setColor(1, 1, 1, 1)
-end
-
-function GameScreen:keypressed(key)
-  if self.winner == Lama.Color.Red or self.winner == Lama.Color.Blue then
-    if self.winnerAnimation.cursor >= self.winnerAnimation.duration and key == "return" or key == "kpenter" then
-      self:navigate("title")
-      applauseSound:stop()
-    end
-  else
-    for index, controller in pairs(self.controllers) do
-      controller:keypressed(key)
-    end
-  end
-end
-
-function GameScreen:keyreleased(key, unicode)
-  if self.winner == nil then
-    for index, controller in pairs(self.controllers) do
-      controller:keyreleased(key)
-    end
-  end
 end
 
 return GameScreen

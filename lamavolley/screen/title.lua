@@ -1,3 +1,4 @@
+local input = require("lamavolley.input")
 local Screen = require("lamavolley.screen")
 
 local TitleScreen = Screen:extend()
@@ -6,6 +7,12 @@ local backgroundImage = love.graphics.newImage("assets/images/lama-title.png")
 local font = love.graphics.newFont("assets/fonts/emulogic.ttf", 30)
 local fontSmall = love.graphics.newFont("assets/fonts/emulogic.ttf", 20)
 local fontSmaller = love.graphics.newFont("assets/fonts/emulogic.ttf", 10)
+
+function TitleScreen:update()
+  if input.anyActionPressed() then
+    self:navigate("mode")
+  end
+end
 
 function TitleScreen:draw()
   love.graphics.draw(backgroundImage, 0, 0)
@@ -23,12 +30,6 @@ function TitleScreen:draw()
   )
   love.graphics.print("Sounds: Applause by Blender Foundation (https://opengameart.org/content/applause)", 10, 995)
   love.graphics.setColor(1, 1, 1, 1)
-end
-
-function TitleScreen:keypressed(key)
-  if key == "return" or key == "kpenter" then
-    self:navigate("mode")
-  end
 end
 
 return TitleScreen
