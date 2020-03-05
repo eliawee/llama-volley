@@ -10,7 +10,8 @@ local highlightImage = love.graphics.newImage("assets/images/lama-playerchoicesc
 ModeScreen.Mode = {
   PlayerPlayer = 1,
   PlayerCPU = 2,
-  CPUPLayer = 3
+  CPUPLayer = 3,
+  CPUCPU = 4 -- easter egg
 }
 
 function ModeScreen:new()
@@ -34,7 +35,11 @@ end
 
 function ModeScreen:update()
   if input.anyPressed("action") then
-    self:navigate("game", self.options[self.activeOptionIndex].mode)
+    self:navigate(
+      "game",
+      (input.players[1]:down("ctrl") and input.players[1]:down("shift") and ModeScreen.Mode.CPUCPU) or
+        self.options[self.activeOptionIndex].mode
+    )
   end
 
   if input.anyPressed("down") then

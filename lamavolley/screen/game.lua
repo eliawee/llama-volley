@@ -25,9 +25,9 @@ function GameScreen:new(mode)
   }
 
   self.controllers = {
-    mode == ModeScreen.Mode.CPUPlayer and CPUController(self.lamas[1]) or
+    (mode == ModeScreen.Mode.CPUPlayer or mode == ModeScreen.Mode.CPUCPU) and CPUController(self.lamas[1]) or
       PlayerController(self.lamas[1], input.players[1]),
-    mode == ModeScreen.Mode.PlayerCPU and CPUController(self.lamas[2]) or
+    (mode == ModeScreen.Mode.PlayerCPU or mode == ModeScreen.Mode.CPUCPU) and CPUController(self.lamas[2]) or
       PlayerController(self.lamas[2], input.players[2])
   }
 

@@ -8,7 +8,9 @@ local players = {
         right = {"key:d", "axis:leftx+"},
         up = {"key:w", "key:z", "axis:lefty-"},
         down = {"key:s", "axis:lefty+"},
-        action = {"key:space", "button:a"}
+        action = {"key:space", "button:a"},
+        ctrl = {"key:lctrl"},
+        shift = {"key:lshift"}
       },
       joystick = love.joystick.getJoysticks()[1]
     }
