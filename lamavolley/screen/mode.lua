@@ -4,35 +4,51 @@ local Screen = require("lamavolley.screen")
 
 local ModeScreen = Screen:extend()
 
-local backgroundImage = love.graphics.newImage("assets/images/bg.png")
+local backgroundImage = love.graphics.newImage("assets/images/lama-playerchoicescreen.png")
+local highlightImage = love.graphics.newImage("assets/images/lama-playerchoicescreen-highlight.png")
+
+ModeScreen.Mode = {
+  PlayerPlayer = 1,
+  PlayerCPU = 2,
+  CPUPLayer = 3
+}
 
 function ModeScreen:new()
-  self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 6)
+  self.options = {
+    {
+      mode = ModeScreen.Mode.PlayerPlayer,
+      highlightOffset = 320
+    },
+    {
+      mode = ModeScreen.Mode.PlayerCPU,
+      highlightOffset = 520
+    },
+    {
+      mode = ModeScreen.Mode.CPUPlayer,
+      highlightOffset = 720
+    }
+  }
+
+  self.activeOptionIndex = 1
 end
 
 function ModeScreen:update()
-  if input.anyActionPressed() then
-    self:navigate("game")
+  if input.anyPressed("action") then
+    self:navigate("game", self.options[self.activeOptionIndex].mode)
+  end
+
+  if input.anyPressed("down") then
+    self.activeOptionIndex = self.activeOptionIndex < table.getn(self.options) and self.activeOptionIndex + 1 or 1
+  end
+
+  if input.anyPressed("up") then
+    self.activeOptionIndex = self.activeOptionIndex > 1 and self.activeOptionIndex - 1 or table.getn(self.options)
   end
 end
 
 function ModeScreen:draw()
   love.graphics.draw(backgroundImage, 0, 0)
-  self.court:draw()
-  -- love.graphics.setFont(font)
-  -- love.graphics.print("PRESS RETURN TO BEGIN", 160, 680)
-  -- love.graphics.setFont(fontSmall)
-  -- love.graphics.setColor(0, 0, 0, 0.4)
-  -- love.graphics.print("LLAMARTIST: Estelle Martinez", 300, 850)
-  -- love.graphics.print("ALPACODER: David Corticchiato", 300, 880)
-  -- love.graphics.setFont(fontSmaller)
-  -- love.graphics.print(
-  --   "Music: 06-06-19 synthwave by Spring (https://opengameart.org/content/06-06-19-synthwave)",
-  --   10,
-  --   980
-  -- )
-  -- love.graphics.print("Sounds: Applause by Blender Foundation (https://opengameart.org/content/applause)", 10, 995)
-  -- love.graphics.setColor(1, 1, 1, 1)
+  love.graphics.draw(highlightImage, 0, self.options[self.activeOptionIndex].highlightOffset)
 end
 
 return ModeScreen

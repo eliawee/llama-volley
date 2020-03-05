@@ -29,7 +29,10 @@ local players = {
 
 return {
   players = players,
-  anyActionPressed = function()
-    return players[1]:pressed("action") or players[2]:pressed("action")
+  anyPressed = function(name)
+    return players[1]:pressed(name) or players[2]:pressed(name)
+  end,
+  anyDown = function(name)
+    return players[1]:down(name) or players[2]:pressed(name)
   end
 }

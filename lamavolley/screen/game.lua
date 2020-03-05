@@ -6,6 +6,7 @@ local PlayerController = require("lamavolley.controller.player")
 local CPUController = require("lamavolley.controller.cpu")
 local Screen = require("lamavolley.screen")
 local ScoreBoard = require("lamavolley.scoreboard")
+local ModeScreen = require("lamavolley.screen.mode")
 
 local GameScreen = Screen:extend()
 
@@ -14,7 +15,7 @@ local redWinnerImage = love.graphics.newImage("assets/images/lama-redwins.png")
 local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png")
 local applauseSound = love.audio.newSource("assets/sounds/applause.wav", "static")
 
-function GameScreen:new()
+function GameScreen:new(mode)
   self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 5)
   self.ball = Ball(self.court, 0, 0, 100)
   self.scoreBoard = ScoreBoard(self.court)
@@ -24,8 +25,10 @@ function GameScreen:new()
   }
 
   self.controllers = {
-    PlayerController(self.lamas[1], input.players[1]),
-    PlayerController(self.lamas[2], input.players[2])
+    mode == ModeScreen.Mode.CPUPlayer and CPUController(self.lamas[1]) or
+      PlayerController(self.lamas[1], input.players[1]),
+    mode == ModeScreen.Mode.PlayerCPU and CPUController(self.lamas[2]) or
+      PlayerController(self.lamas[2], input.players[2])
   }
 
   self.lastServing = 1
@@ -99,7 +102,7 @@ function GameScreen:update(dt)
   if self.winner then
     if self.winnerAnimation.cursor < self.winnerAnimation.duration then
       self.winnerAnimation.cursor = self.winnerAnimation.cursor + dt
-    elseif input.anyActionPressed() then
+    elseif input.anyPressed("action") then
       self:navigate("title")
       applauseSound:stop()
     end

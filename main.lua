@@ -29,11 +29,11 @@ function love.load()
   state.screen = TitleScreen()
 
   Screen.onNavigate(
-    function(screenName)
+    function(screenName, parameter)
       local screenConstructor = screens[screenName]
 
       if screenConstructor then
-        state.screen = screenConstructor()
+        state.screen = screenConstructor(parameter)
       end
     end
   )

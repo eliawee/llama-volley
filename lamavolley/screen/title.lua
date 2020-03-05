@@ -9,7 +9,7 @@ local fontSmall = love.graphics.newFont("assets/fonts/emulogic.ttf", 20)
 local fontSmaller = love.graphics.newFont("assets/fonts/emulogic.ttf", 10)
 
 function TitleScreen:update()
-  if input.anyActionPressed() then
+  if input.anyPressed("action") then
     self:navigate("mode")
   end
 end

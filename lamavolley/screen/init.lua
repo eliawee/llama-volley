@@ -14,9 +14,9 @@ end
 function Screen:draw()
 end
 
-function Screen:navigate(name)
+function Screen:navigate(name, parameter)
   if navigationListener then
-    navigationListener(name)
+    navigationListener(name, parameter)
   end
 end
 
