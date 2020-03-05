@@ -13,7 +13,7 @@ local GameScreen = Screen:extend()
 local backgroundImage = love.graphics.newImage("assets/images/bg.png")
 local redWinnerImage = love.graphics.newImage("assets/images/lama-redwins.png")
 local blueWinnerImage = love.graphics.newImage("assets/images/lama-bluewins.png")
-local applauseSound = love.audio.newSource("assets/sounds/applause.wav", "static")
+local applauseSound = love.audio.newSource("assets/sounds/applause.wav", "stream")
 
 function GameScreen:new(mode)
   self.court = Court({x = 100, y = 200}, {x = 192, y = 384}, 5)

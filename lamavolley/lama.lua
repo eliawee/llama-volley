@@ -1,3 +1,4 @@
+local tween = require("lib.tween")
 local Object = require("lib.classic")
 local Position = require("lamavolley.position")
 
@@ -12,7 +13,11 @@ local images = {
     buttKick = love.graphics.newImage("assets/images/lama-blue-buttkick.png"),
     headKick = love.graphics.newImage("assets/images/lama-blue-headkick.png")
   },
-  shadow = love.graphics.newImage("assets/images/lama-shadow.png")
+  shadow = love.graphics.newImage("assets/images/lama-shadow.png"),
+  maw = love.graphics.newImage("assets/images/maw.png"),
+  nom = love.graphics.newImage("assets/images/nom.png"),
+  pow = love.graphics.newImage("assets/images/pow.png"),
+  whap = love.graphics.newImage("assets/images/whap.png")
 }
 
 local quads = {
@@ -75,6 +80,12 @@ function Lama:new(court, ball, x, y, direction, color)
   self.images = color == Lama.Color.Blue and images.blue or images.red
   count = count + 1
   self.id = count
+
+  self.effect = {
+    props = {
+      scale = 0
+    }
+  }
 end
 
 function Lama:canTranslateY(distance)
@@ -90,6 +101,25 @@ end
 
 function Lama:update(dt)
   local directionCorrection = self.direction == Lama.Direction.Right and 1 or -1
+
+  if self.effect.keep then
+    self.effect.keep.cursor = self.effect.keep.cursor + dt
+
+    if self.effect.keep.cursor >= self.effect.keep.duration then
+      self.effect.props.scale = 0
+      self.effect.tween = nil
+      self.effect.keep = nil
+    end
+  elseif self.effect.tween then
+    local complete = self.effect.tween:update(dt)
+
+    if complete and not self.effect.keep then
+      self.effect.keep = {
+        duration = 0.6,
+        cursor = 0
+      }
+    end
+  end
 
   if self.motions[Lama.Motion.Up] == true and self:canTranslateX(dt * Lama.Velocity) then
     self.position:translate(dt * Lama.Velocity, 0)
@@ -143,7 +173,8 @@ function Lama:update(dt)
   end
 
   if
-    self.ball:sameSideAs(self) and not self.ball.touchedNet and self.headKickState.active and (not self.lastKick or love.timer.getTime() - self.lastKick > 0.5) and
+    self.ball:sameSideAs(self) and not self.ball.touchedNet and self.headKickState.active and
+      (not self.lastKick or love.timer.getTime() - self.lastKick > 0.5) and
       self.ball.playable and
       self.ball.position.z <= 4 and
       self.ball.position.z > 2 and
@@ -152,9 +183,28 @@ function Lama:update(dt)
    then
     local minBonus = 0.2
     local maxBonus = 1
-    local bonusK = (4 * minBonus - 2) / (4 - 2)
-    local bonusAlpha = (1 - bonusK) / 4
-    local bonus = bonusAlpha * self.ball.position.z + bonusK
+
+    local kickBonusK = (self.headKickState.duration * minBonus - 0) / (self.headKickState.duration - 0)
+    local kickBonusAlpha = (1 - kickBonusK) / self.headKickState.duration
+    local kickBonus = kickBonusAlpha * (self.headKickState.duration - self.headKickState.cursor) + kickBonusK
+
+    if kickBonus < 0 then
+      kickBonus = 0
+    elseif kickBonus > 1 then
+      kickBonus = 1
+    end
+
+    local zBonusK = (3.9 * minBonus - 2.7) / (3.9 - 2.7)
+    local zBonusAlpha = (1 - zBonusK) / 3.9
+    local zBonus = zBonusAlpha * self.ball.position.z + zBonusK
+
+    if zBonus < 0 then
+      zBonus = 0
+    elseif zBonus > 1 then
+      zBonus = 1
+    end
+
+    local bonus = (kickBonus + zBonus) / 2
 
     if bonus < minBonus then
       bonus = minBonus
@@ -162,10 +212,28 @@ function Lama:update(dt)
       bonus = maxBonus
     end
 
+    print("kick sync", (self.headKickState.duration - self.headKickState.cursor))
+    print("z", self.ball.position.z)
+    print("zBonus", zBonus)
+    print("kickBonus", kickBonus)
+    print("bonus", bonus)
+
     self.ball.velocity.z = 30 * bonus
     self.ball.velocity.x = 4 * (self.ball.position.x - self.position.x)
     self.ball.velocity.y = (self.direction == Lama.Direction.Left and 100 or -100)
     self.lastKick = love.timer.getTime()
+
+    if bonus < minBonus + (maxBonus - minBonus) / 4 then
+      self.effect.image = images.nom
+    elseif bonus < minBonus + (maxBonus - minBonus) * 2 / 4 then
+      self.effect.image = images.maw
+    elseif bonus < minBonus + (maxBonus - minBonus) * 3 / 4 then
+      self.effect.image = images.whap
+    else
+      self.effect.image = images.pow
+    end
+
+    self.effect.tween = tween.new(0.3, self.effect.props, {scale = 1}, "outBack")
 
     self.ball.lastKickingLama = self
     self.ball:showPrediction()
@@ -276,15 +344,23 @@ function Lama:draw()
     (self.direction == Lama.Direction.Left and not (self:isServing() and not self.buttKickState.active)) or
     (self.direction == Lama.Direction.Right and (self:isServing() and not self.buttKickState.active))
 
-  love.graphics.draw(
-    self:getImageToDraw(),
-    self:getQuadToDraw(),
-    center.x - Lama.Width / 2 + ((needDirectionCorrection and 1 or 0) * Lama.Width),
-    center.y - Lama.Height,
-    0,
-    needDirectionCorrection and -1 or 1,
-    1
-  )
+  local x = center.x - Lama.Width / 2 + ((needDirectionCorrection and 1 or 0) * Lama.Width)
+  local y = center.y - Lama.Height
+
+  if self.effect.tween or self.effect.keep then
+    local effectWidth, effectHeight = self.effect.image:getDimensions()
+
+    love.graphics.draw(
+      self.effect.image,
+      (self.direction == Lama.Direction.Right and x + Lama.Width / 4 or x - Lama.Width / 4) -
+        effectWidth * self.effect.props.scale / 2,
+      y - effectHeight * self.effect.props.scale,
+      0,
+      self.effect.props.scale
+    )
+  end
+
+  love.graphics.draw(self:getImageToDraw(), self:getQuadToDraw(), x, y, 0, needDirectionCorrection and -1 or 1, 1)
 end
 
 return Lama

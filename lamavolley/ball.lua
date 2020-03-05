@@ -6,10 +6,10 @@ local image = love.graphics.newImage("assets/images/lama-ball.png")
 local shadowImage = love.graphics.newImage("assets/images/lama-ball-shadow.png")
 local targetImage = love.graphics.newImage("assets/images/lama-ball-target.png")
 local ballSounds = {
-  love.audio.newSource("assets/sounds/qubodupPunch01.ogg", "static"),
-  love.audio.newSource("assets/sounds/qubodupPunch02.ogg", "static"),
-  love.audio.newSource("assets/sounds/qubodupPunch03.ogg", "static"),
-  love.audio.newSource("assets/sounds/qubodupPunch04.ogg", "static")
+  love.audio.newSource("assets/sounds/qubodupPunch01.ogg", "stream"),
+  love.audio.newSource("assets/sounds/qubodupPunch02.ogg", "stream"),
+  love.audio.newSource("assets/sounds/qubodupPunch03.ogg", "stream"),
+  love.audio.newSource("assets/sounds/qubodupPunch04.ogg", "stream")
 }
 
 local Ball = Object:extend()
